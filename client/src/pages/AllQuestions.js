@@ -1,3 +1,4 @@
+// AllQuestions.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -18,14 +19,15 @@ function AllQuestions() {
   const fetchQuestions = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/questions");
-      const questions = res.data;
-      setQuestions(questions);
+      const fetchedQuestions = res.data;
+      setQuestions(fetchedQuestions);
 
-      // Fetch answers for each question
       const answersMap = {};
-      for (const q of questions) {
+      for (const q of fetchedQuestions) {
         const res = await axios.get(`http://localhost:5000/api/answers/${q._id}`);
-        answersMap[q._id] = res.data;
+        // Sort answers by vote count (already sorted in backend, but just to be sure)
+        const sortedAnswers = [...res.data].sort((a, b) => b.votes - a.votes);
+        answersMap[q._id] = sortedAnswers;
       }
       setAnswers(answersMap);
     } catch (err) {
@@ -61,12 +63,29 @@ function AllQuestions() {
       );
 
       setAnswerInputs((prev) => ({ ...prev, [questionId]: "" }));
-      await fetchQuestions(); // ✅ Refresh to show new answer
+      await fetchQuestions();
     } catch (err) {
       console.error("Submit error:", err.response?.data || err.message);
       alert("Failed to submit answer: " + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpvote = async (answerId, questionId) => {
+    try {
+      await axios.post(
+        `http://localhost:5000/api/answers/upvote/${answerId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      await fetchQuestions();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to upvote");
     }
   };
 
@@ -106,6 +125,10 @@ function AllQuestions() {
                     <div key={ans._id} className="answer-item">
                       <p>{ans.content}</p>
                       <small>— @{ans.userId?.username || "anonymous"}</small>
+                      <div className="vote-section">
+                        <button onClick={() => handleUpvote(ans._id, q._id)}>⬆️ Upvote</button>
+                        <span>{ans.votes || 0} votes</span>
+                      </div>
                     </div>
                   ))
                 ) : (
