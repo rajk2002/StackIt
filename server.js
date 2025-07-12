@@ -29,3 +29,6 @@ app.use("/api/auth", authRoutes);
 
 const questionRoutes = require("./server/routes/questions");
 app.use("/api/questions", questionRoutes);
+
+const answerRoutes = require("./server/routes/answers");
+app.use("/api/answers", answerRoutes);

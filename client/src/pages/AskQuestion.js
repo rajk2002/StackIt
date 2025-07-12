@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 
 function AskQuestion() {
-  const [form, setForm] = useState({ title: "", body: "" });
+  const [form, setForm] = useState({
+    title: "",
+    body: "",
+    tags: "",
+  });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -15,11 +19,22 @@ function AskQuestion() {
     e.preventDefault();
     setError("");
 
-    // ✅ Frontend validation
-    if (!form.title.trim() || !form.body.trim()) {
+    const { title, body, tags } = form;
+
+    // Frontend validation
+    if (!title.trim() || !body.trim() || !tags.trim()) {
       setError("All fields are required");
       return;
     }
+
+    const payload = {
+      title,
+      description: body,
+      tags: tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0),
+    };
 
     try {
       const res = await fetch("http://localhost:5000/api/questions", {
@@ -28,13 +43,13 @@ function AskQuestion() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to post question");
 
-      navigate("/"); // ✅ redirect to home after success
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }
@@ -59,6 +74,15 @@ function AskQuestion() {
         placeholder="Explain your question in detail"
         rows="6"
         value={form.body}
+        onChange={handleChange}
+        required
+      />
+
+      <input
+        type="text"
+        name="tags"
+        placeholder="Tags (comma separated, e.g. javascript, react)"
+        value={form.tags}
         onChange={handleChange}
         required
       />
