@@ -1,5 +1,6 @@
 /* src/App.css */
 
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
 /* Set universal box-sizing for consistent layout */
@@ -286,4 +287,64 @@ textarea {
 .secondary-btn:hover {
   background-color: #10b981;
   color: white;
+}
+
+.auth-form input[type="text"]:last-of-type {
+  margin-bottom: 1.2rem;
+}
+
+.answer-section {
+  margin-top: 1rem;
+}
+
+.answer-section textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  resize: none;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+.submit-answer-btn {
+  background-color: #2d6cdf;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.submit-answer-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.answer-section {
+  margin-top: 12px;
+}
+
+.answer-textarea {
+  width: 100%;
+  padding: 10px;
+  resize: vertical;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+.submit-answer-btn {
+  background-color: #1f78ff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-answer-btn:hover {
+  background-color: #005ce6;
 }

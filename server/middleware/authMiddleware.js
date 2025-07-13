@@ -1,16 +1,27 @@
 const jwt = require("jsonwebtoken");
+const User = require("../modules/User");
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization");
+const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ message: "No token, access denied" });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_jwt_secret");
+    const user = await User.findById(decoded.userId); 
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized: User not found" });
+    }
+
+    req.user = { id: user._id, username: user.username, email: user.email }; 
     next();
   } catch (err) {
-    res.status(401).json({ message: "Token is not valid" });
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
 
