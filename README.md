@@ -1,3 +1,7 @@
+# Participant Details
+Raj Khatri
+Prangopal Das 
+
 # StackIt
 
 StackIt – A Minimal Q&A Forum Platform

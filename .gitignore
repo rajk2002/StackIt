@@ -1,2 +1,10 @@
-.env*
-node_modules
+# .gitignore file for a Node.js project
+# Ignore node_modules directory
+# Ignore logs
+logs
+*.log   
+# Ignore npm debug log
+npm-debug.log*
+# Ignore environment variables file
+*.env
+*node_modules
